@@ -5,31 +5,28 @@ var cheerio = require('cheerio');
 var app     = express();
 var i;
 var url1;
-
+var js ={};
+var restaurants ;
+var key = "restaurants";
+js[key]=[];
 app.get('/scrape', function(req, res){
 
-	var url= 'https://restaurant.michelin.fr/restaurants/france/restaurants-1-etoile-michelin/restaurants-2-etoiles-michelin/restaurants-3-etoiles-michelin';
-	var url2= 'https://restaurant.michelin.fr/restaurants/france/restaurants-1-etoile-michelin/restaurants-2-etoiles-michelin/restaurants-3-etoiles-michelin/page-';
-	for(i=1;i<=35;i++){
-		if (i==1){
-			url1=url;
-		}
-		else{
-			url1=url2 +i;
-		}
+	var url= "https://restaurant.michelin.fr/restaurants/france/restaurants-1-etoile-michelin/restaurants-2-etoiles-michelin/restaurants-3-etoiles-michelin";
+	var url2= "https://restaurant.michelin.fr/restaurants/france/restaurants-1-etoile-michelin/restaurants-2-etoiles-michelin/restaurants-3-etoiles-michelin/page-";
+	url1=url
 
 
+for(i=2;i<=35;i++){
 		request(url1, function(error, response, html){
+					url1=url2 +i;
 				    if(!error){
 				        var $ = cheerio.load(html);
 			            
-			            var js ={};
-			            var key = "restaurants";
-			            js[key]=[];
-					   	
+						
+			            
 					   
 				    	$('.view-mode-poi_card').each(function(i,element){
-				    		var restaurants = { 'title' : '','offers' : '','cuisine' :'' , 'price' : '','stars':''};
+				    		restaurants= { 'title' : '','offers' : '','cuisine' :'' , 'price' : '','stars':''};
 
 				    		var data = $(this);
 
@@ -60,16 +57,19 @@ app.get('/scrape', function(req, res){
 					        
 				    	 	js[key].push(restaurants);
 				    	 	})
-					 
-				    	 	res.writeFile('Liste-restaurants.json', JSON.stringify(js, null, 4),function(err){
-
-				    });
 				    	
-				}
+				    	 	fs.writeFile('Liste-restaurants.json', JSON.stringify(js, null, 4),function(err){
+			
+						});
+					}
+					 
+				   		 });
+				res.write('A file Liste-restaurants.json has been created in your working directory!');
 				
-		});
-		
-	}
+				
+			}
+				res.end();
+
 })
 
 
