@@ -18,58 +18,50 @@ app.get('/scrape', function(req, res){
 
 for(i=2;i<=35;i++){
 		request(url1, function(error, response, html){
-					url1=url2 +i;
-				    if(!error){
-				        var $ = cheerio.load(html);
-			            
-						
-			            
-					   
-				    	$('.view-mode-poi_card').each(function(i,element){
-				    		restaurants= { 'title' : '','offers' : '','cuisine' :'' , 'price' : '','stars':''};
+			url1=url2 +i;
+		    if(!error){
+		        var $ = cheerio.load(html);
+		    	$('.view-mode-poi_card').each(function(i,element){
+		    		restaurants= { 'title' : '','offers' : '','cuisine' :'' , 'price' : '','stars':''};
 
-				    		var data = $(this);
+		    		var data = $(this);
 
-				    		var stars = data.find('.guide').children().first();
-				    		if(stars.attr('class')=="guide-icon icon-mr icon-cotation1etoile"){
-				    			restaurants.stars='1 etoile';
-				    		}
-				    		else if(stars.attr('class')=="guide-icon icon-mr icon-cotation2etoiles"){
-				    			restaurants.stars='2 etoiles';
-				    		}
-				    		else if(stars.attr('class')=="guide-icon icon-mr icon-cotation3etoiles"){
-				    			restaurants.stars='3 etoiles';
-				    		}
-				    		
-				    		 //get the name of the restaurant
-					        var title = data.find('.poi_card-display-title').text();        
-					        restaurants.title = title.trim();
-					        
-					        //get the offers of the restaurant		    	 	
-			    	 		var offers =  data.find('.poi_card-display-offers').first().text();
-			    	 		restaurants.offers=offers.trim(); 			    	 	
-			    		
-					        var cuisine =  data.find('.poi_card-display-cuisines').text();        
-					        restaurants.cuisine = cuisine.trim();
+		    		var stars = data.find('.guide').children().first();
+		    		if(stars.attr('class')=="guide-icon icon-mr icon-cotation1etoile"){
+		    			restaurants.stars='1 etoile';
+		    		}
+		    		else if(stars.attr('class')=="guide-icon icon-mr icon-cotation2etoiles"){
+		    			restaurants.stars='2 etoiles';
+		    		}
+		    		else if(stars.attr('class')=="guide-icon icon-mr icon-cotation3etoiles"){
+		    			restaurants.stars='3 etoiles';
+		    		}
+		    		
+		    		 //get the name of the restaurant
+			        var title = data.find('.poi_card-display-title').text();        
+			        restaurants.title = title.trim();
+			        
+			        //get the offers of the restaurant		    	 	
+	    	 		var offers =  data.find('.poi_card-display-offers').first().text();
+	    	 		restaurants.offers=offers.trim(); 			    	 	
+	    		
+			        var cuisine =  data.find('.poi_card-display-cuisines').text();        
+			        restaurants.cuisine = cuisine.trim();
 
-					        var price =  data.find('.poi_card-display-price').text();        
-					        restaurants.price = price.trim();
-					        
-				    	 	js[key].push(restaurants);
-				    	 	})
-				    	
-				    	 	fs.writeFile('Liste-restaurants.json', JSON.stringify(js, null, 4),function(err){
-			
-						});
-					}
-					 
-				   		 });
-				res.write('A file Liste-restaurants.json has been created in your working directory!');
-				
-				
-			}
-				res.end();
-
+			        var price =  data.find('.poi_card-display-price').text();        
+			        restaurants.price = price.trim();
+			        
+		    	 	js[key].push(restaurants);
+		    	})
+		    	
+		    	fs.writeFile('Liste-restaurants.json', JSON.stringify(js, null, 4),function(err){
+	
+				});
+		   	}
+		});
+		res.write('A file Liste-restaurants.json has been created in your working directory!');
+	}
+	res.end();
 })
 
 
