@@ -5,7 +5,7 @@
   "main": "server.js",
   "author": "Scotch",
   "dependencies": {
-    "cheerio": "latest",
+    "cheerio": "^1.0.0-rc.2",
     "express": "^4.16.2",
     "package.json": "^2.0.1",
     "request": "latest"

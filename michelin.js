@@ -67,11 +67,16 @@ for(i=1;i<=35;i++){
 					    			restaurants.stars='3 etoiles';
 					    		}
 
-					    		$('.view-restaurant-offers').children('.view-content').children().each(function(i,element){
-
-					    			var offers =$(this).find('.bookatable-promotion-details-wrapper').children('.title-wrapper').children().first().text();
-					    			restaurants.offers.push(offers);
-					    		})
+					    		if($('.view-restaurant-offers')[0]){
+						    		$('.view-restaurant-offers').children('.view-content').children().each(function(i,element){
+						    			var temp ={'description': '', 'validity' :''};
+						    			var description =$(this).find('.bookatable-promotion-details-wrapper').children('.title-wrapper').children().first().text();
+						    			temp.description = description.trim();
+						    			var validity = $(this).find('.validity-dates-wrapper').text();
+						    			temp.validity=validity.trim();
+						    			restaurants.offers.push(temp);
+						    		})					    			
+					    		}
 					    		
 					    		console.log(title);
 				    	 		js[key].push(restaurants);
