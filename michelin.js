@@ -14,7 +14,7 @@ async function getUrl(){
 		var url2;
 		var url1= "https://restaurant.michelin.fr/restaurants/france/restaurants-1-etoile-michelin/restaurants-2-etoiles-michelin/restaurants-3-etoiles-michelin/page-";
 		
-		for(i=1;i<2;i++){
+		for(i=1;i<3;i++){
 			url2=url1+i;
 			urlpage.push(url2);
 		}
@@ -142,6 +142,5 @@ async function get(){
 				});
 	console.log('A file Liste-restaurants.json has been created in your working directory');
 }
-
-
+get();
 module.exports.get=get;
