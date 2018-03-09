@@ -3,28 +3,58 @@ var fs = require('fs');
 var request = require('request');
 var cheerio = require('cheerio');
 var app     = express();
-const michelin = require('./michelin');
+var accents = require('remove-accents');
 
 
-console.log(michelin.get());
 
-/*app.get('/scrape', function(req, res){
-	
-	var url= "https://www.lafourchette.com/";
+async function get_url_LaFourchette(restaurant){
+	return new Promise((resolve, reject)=> {
+		var name = accents.remove(restaurant.title).toLowerCase().replace(/ /g,"-").replace(/'/g,"-");
+		var address = restaurant.postal_code;
 
-	request(url, function(error, response, html){
-
-		if(!error){
+		var url= "https://m.lafourchette.com/api/restaurant-prediction?name="+name;
+		var url2 = "https://m.lafourchette.com/api/restaurant/";
+		var url3 =[];
+		request(url, function(error, response, html){
+		    if(!error){
 		        const $ = cheerio.load(html);
-		    	$('.cityContainer').each(function(i,element){
-		    		var data = $(this);
-		    		var url_bis = data.find('.hpCityItem-title').attr(href);
-		    		console.log(url_bis);
+		        var restos =JSON.parse($('body').text());
+		        for(var i=0;i<restos.length;i++){
+		        	if (address==restos[i].postal_code){
+		        		resolve(url2+restos[i].id+"/sale-type");
+		        	}
+		        }
+		    resolve("");
+			}
+		})
 
-		    	})
-		    }
 	});
-		    res.write('A file Liste-restaurants.json has been created in your working directory!');
-})
-app.listen('8081') ;
-console.log('Magic happens on port 8081');*/
+}
+
+async function getDeal(restaurant){
+	var url = await get_url_LaFourchette(restaurant);
+	return new Promise((resolve, reject)=> {
+		//var url ="https://m.lafourchette.com/api/restaurant/2828/sale-type";
+		var offer = {'title':'','description':''};
+		var headers = {  
+				'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/63.0.3239.132 Safari/537.36',
+				'Content-Type' : 'application/x-www-form-urlencoded' 
+			};
+		request({url:url,headers:headers},function(error, response, html){
+		    if(!error){
+		        const $ = cheerio.load(html);
+		        var deals =JSON.parse($('body').text());
+		        if(deals[0].is_special_offer==true){
+		        	offer.title= deals[0].title;
+		        	offer.description =deals[0].description;
+		        	console.log(offer);
+		        }
+		   	resolve(offer);
+
+		    }
+		})
+	});
+}
+
+
+module.exports.getDeal=getDeal;
