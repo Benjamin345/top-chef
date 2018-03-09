@@ -2,8 +2,9 @@ var express = require('express');
 var fs = require('fs');
 var request = require('request');
 var cheerio = require('cheerio');
-var http = require('http');
 var app     = express();
+const lafourchette = require('./lafourchette');
+var accents = require('remove-accents');
 var i;
 var j = 0;
 
@@ -14,7 +15,7 @@ async function getUrl(){
 		var url2;
 		var url1= "https://restaurant.michelin.fr/restaurants/france/restaurants-1-etoile-michelin/restaurants-2-etoiles-michelin/restaurants-3-etoiles-michelin/page-";
 		
-		for(i=1;i<3;i++){
+		for(i=1;i<=35;i++){
 			url2=url1+i;
 			urlpage.push(url2);
 		}
@@ -31,21 +32,24 @@ async function getresto(urlpage){
 	return new Promise((resolve, reject)=> {
 		var Urlresto=[];
 		request(urlpage, function(error, response, html){
-		    if(!error){
+		    if(!error  && response.statusCode == 200){
 		        var $ = cheerio.load(html);
 		    	$('.poi-card-link').each(function(){
-					Urlresto.push("https://restaurant.michelin.fr"+$(this).attr('href'));
+		    		var urlbis =$(this).attr('href');
+					Urlresto.push("https://restaurant.michelin.fr/"+urlbis);
 		    	});
 			resolve(Urlresto);
 			}
 		});
 	});
 }
-async function allUrl(urlpage){
+
+async function allUrl(){
+	var urlpage = await getUrl();
 	return new Promise((resolve, reject)=> {
 		var Urlresto = [];
 		var urls=[];
-		urlpage.forEach(function(url,i){
+		urlpage.forEach(function(url){
 			Urlresto.push(getresto(url));
 		})
 		Promise.all(Urlresto).then(values=>{
@@ -63,9 +67,9 @@ async function scrape_base(url){
 	return new Promise((resolve, reject)=> {
 	var restaurants1 = [];
 	var restos = [];
-	var restaurants= { 'title' : '','cuisine' :'' , 'price' : '','stars':'','chief_name':'','offers' : [],'address' : {'street_block':'', 'postal_code' : '', 'locality' : ''}};
+	var restaurants= { 'title' : '','cuisine' :'' , 'price' : '','stars':'','chief_name':'','offers' :[],'deals_lafourchette' : [],'address' : {'street_block':'', 'postal_code' : '', 'locality' : ''}};
 	request(url, function(error, response, html){
-			if(!error){
+			if(!error  && response.statusCode == 200){
 				const $ = cheerio.load(html);
 
 				var title = $('.poi_intro-display-title').text();
@@ -112,8 +116,9 @@ async function scrape_base(url){
 	    		}
     	 		restaurants1.push(restaurants);
 		    	
-			}
 			resolve(restaurants1);
+			}
+			resolve("");
 		});	
 	});
 }
@@ -121,26 +126,47 @@ async function scrape(Urls){
 	return new Promise((resolve, reject)=> {
 		var restaurants = [];
 		var restos = [];
-		for (i=0;i<Urls.length;i++){
-			var resto = scrape_base(Urls[i]);
-			restaurants.push(resto);
-		}
+		var temp ;
+		Urls.forEach(function(url,i){
+			temp =scrape_base(url);
+			restaurants.push(temp);
+		})
 		Promise.all(restaurants).then(values=>{
-			values.forEach(function(url){
-				restos = restos.concat(url);
+			values.forEach(function(value){
+				restos = restos.concat(value);
 			})
 			resolve(restos);
 		})
 	});
 }
-async function get(){
-	var urlpage = await getUrl();	
-	var url = await allUrl(urlpage);
+async function get(){	
+	console.log('waiting urls ..');
+	var url = await allUrl();
+	console.log('waiting restaurants ..');
 	var restaurants = await scrape(url);
-	console.log(JSON.stringify(restaurants, null, 4));
 	fs.writeFile('Liste-restaurants.json', JSON.stringify(restaurants, null, 4),function(err){
 				});
 	console.log('A file Liste-restaurants.json has been created in your working directory');
+	return restaurants;
 }
-get();
+
+async function updateDeals(){
+	var restaurants =fs.readFileSync('Liste-restaurants.json','utf8');
+	var restos;
+	var promises = [];
+	var restaurant = JSON.parse(restaurants);
+	//console.log(restaurants);
+	for(i=0;i<restaurant.length;i++){
+		restos = await lafourchette.getDeal(restaurant[i]);
+		if(restos){
+			promises.push(restos);
+		}
+	}
+	Promise.all(promises).then(values => {
+		fs.writeFile('Liste-restaurants_lafourchette.json',JSON.stringify(values, null, 4),function(err){
+					});
+	})
+	console.log('ok');
+}
+updateDeals();
 module.exports.get=get;
