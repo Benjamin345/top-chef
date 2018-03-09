@@ -30,12 +30,16 @@ async function get_url_LaFourchette(restaurant){
 
 	});
 }
-
 async function getDeal(restaurant){
 	var url = await get_url_LaFourchette(restaurant);
+	var deal = await get_Deal(url);
+	restaurant.deals_lafourchette.push(deal);
+	return restaurant;
+}
+async function get_Deal(url){
 	return new Promise((resolve, reject)=> {
-		//var url ="https://m.lafourchette.com/api/restaurant/2828/sale-type";
-		var offer = {'title':'','description':''};
+		var restos = [];
+		var offer = {'title':'','description':''}; 
 		var headers = {  
 				'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/63.0.3239.132 Safari/537.36',
 				'Content-Type' : 'application/x-www-form-urlencoded' 
@@ -47,10 +51,10 @@ async function getDeal(restaurant){
 		        if(deals[0].is_special_offer==true){
 		        	offer.title= deals[0].title;
 		        	offer.description =deals[0].description;
-		        	console.log(offer);
+		
 		        }
-		   	resolve(offer);
-
+		        //console.log(offer);
+		    resolve(offer);
 		    }
 		})
 	});
