@@ -1,0 +1,24 @@
+body {
+  font: 14px "URW Chancery L", cursive;
+  margin: center;
+}
+
+ol, ul, li {
+  font: "URW Chancery L", cursive;
+  padding-left: 30px;
+}
+
+h2 {
+  font-family: 19px Jazz LET, fantasy;
+}
+
+h1 {
+  font-family: 20px "Stencil Std", fantasy;
+}
+
+b {
+  font-family: 18px "Luminari", fantasy;
+}
+address{
+  margin-left:15%;
+}
