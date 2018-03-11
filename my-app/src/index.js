@@ -2,8 +2,8 @@ import './index.css';
 import React from 'react';
 import ReactDOM from 'react-dom';
 import restaurants from  './Liste-restaurants_lafourchette';
+import 'bootstrap/dist/css/bootstrap.min.css';
 var accents = require('remove-accents');
-//import 'bootstrap/dist/css/bootstrap.min.css';
 
 function IsOfferMichelin(props){
 	const michelin_offer = props.value[0];
@@ -108,11 +108,11 @@ class Checkbox extends React.Component {
 	    	<form onSubmit={this.handleSubmit}>
 		        <div>
 			        <label>1 Star</label>
-			        <input type="checkbox" id="chk1"className="chk11" checked={ this.state.checked } onChange={ this.handleChange } />
+			        <input type="checkbox" id="chk1"className="chk11" checked={ this.state.checked } onChange={ this.handleChange } /><br/>
 			        <label>2 Stars</label>
-			        <input type="checkbox" id="chk2" className="chk22" checked={ this.state.checked2 } onChange={ this.handleChange2 } />
+			        <input type="checkbox" id="chk2" className="chk22" checked={ this.state.checked2 } onChange={ this.handleChange2 } /><br/>
 			        <label>3 Stars</label>
-			        <input type="checkbox" id="chk3" className="chk33" checked={ this.state.checked3 } onChange={ this.handleChange3 } />
+			        <input type="checkbox" id="chk3" className="chk33" checked={ this.state.checked3 } onChange={ this.handleChange3 } /><b>         </b>
 	        		<input type="submit" value="Search" />
 		      	</div>
 	        </form>
@@ -153,11 +153,11 @@ class MichelinOffers extends React.Component{
 class Restaurantsaddress extends React.Component{
 	render() {
 		return(
-			<div class="address">
+			<ul class="address">
 				{this.props.value.street_block}<br/>
 				{this.props.value.postal_code}<br/>
 				{this.props.value.locality}
-			</div>
+			</ul>
 		)
 	}
 }
@@ -182,10 +182,9 @@ class SearchBar extends React.Component {
   	return (
       <form onSubmit={this.handleSubmit}>
         <label>
-          Restaurant name : 
+           <b>Restaurant name :   </b>
           <input type="text" value={this.state.value} onChange={this.handleChange} />
         </label>
-        
       </form>
     );
   }
@@ -195,9 +194,15 @@ class Restaurants extends React.Component{
 	render() {
 		return(
 			<div>
-				<h1>Restaurants Etoilés - Promos Michelin - Promos La Fourchette</h1>
-				<Checkbox/>
-				<SearchBar/>
+				<div  class="head-page">
+					<h1>Restaurants Etoilés - Promos Michelin - Promos La Fourchette</h1>	
+					<div class="search">
+						<SearchBar class="search"/>
+					</div>
+					<div class="boxes">
+						<Checkbox />
+					</div>
+				</div>
 				{this.props.value.map((restaurant)=>{
 					return <Restaurant value ={restaurant}/>
 					})
@@ -231,7 +236,7 @@ class Restaurant extends React.Component {
 							})
 						}
 					</div>
-					<div class="address" >
+					<div>
 						<b>Adresse :</b>
 							<Restaurantsaddress value = {this.props.value.address}/><br/>		
 					</div>

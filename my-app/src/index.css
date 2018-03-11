@@ -5,20 +5,29 @@ body {
 
 ol, ul, li {
   font: "URW Chancery L", cursive;
-  padding-left: 30px;
+  margin-left: 30px;
 }
 
 h2 {
   font-family: 19px Jazz LET, fantasy;
 }
 
-h1 {
+.head-page {
+  text-align: center;
+  background-color: DarkRed;
+  color: white;
   font-family: 20px "Stencil Std", fantasy;
 }
 
 b {
   font-family: 18px "Luminari", fantasy;
 }
-address{
-  margin-left:15%;
+
+.boxes{
+  text-align :left;
+}
+
+.search{
+  text-align: right;
+  opacity: 75%;
 }
