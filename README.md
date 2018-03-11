@@ -1,14 +1,14 @@
 # TOP CHEF
 
 ## view the web-site
-'go to the folder my-app in the repository top-chef.<br/>
--run the command npm start
--go to localhost:3000;
+go to the folder my-app in the repository top-chef.<br/>
+-run the command npm start<br/>
+-go to localhost:3000<br/>
 
 ## scrape Michelin and LaFourchette
--go to the repository my-app in the repositorty top-chef
--use the command node server.js
--go to localhost:8081
--wait for the message "ok" in the console
-->two files will have been created : Liste-restaurants.json (the scraping of michelin)
-                                     Liste restaurants.json (the previous liste with the deals from lafourchette), this file is the one we will us in the react application
+-go to the repository my-app in the repositorty top-chef<br/>
+-use the command node server.js<br/>
+-go to localhost:8081<br/>
+-wait for the message "ok" in the console<br/>
+->two files will have been created : <br/>-Liste-restaurants.json (the scraping of michelin)<br/>
+                                     -Liste restaurants.json (the previous liste with the deals from lafourchette), this file is the one we will us in the react application
